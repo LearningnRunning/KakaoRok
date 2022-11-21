@@ -60,6 +60,16 @@ for result in result_lst:
     try:
         print("-" * 80)
         print(result)
+        personalAverageScoreRow = 3.2
+        thisRestaurantScore = 2.0
+        row_df = tmp_df[
+            (tmp_df["name"] == result[0])
+            & (tmp_df["rate"] >= personalAverageScore)
+            & (tmp_df["reviewAt"] <= thisRestaurantScore)
+        ]
+        if len(row_df) >= 3:
+            print("불호가 너무 많은 식당입니다. 불호 개수 : {}".format(len(row_df)))
+            continue
         detail = result_df[result_df["name"] == result[0]].iloc[0, :]
         if type(detail["likePoint"]) != float:
             likePoint = detail["likePoint"].split("@")
@@ -78,6 +88,6 @@ for result in result_lst:
         print(err)
         continue
 print("-" * 80)
-choicelist = random.choice(list(result_lst))
-print("랜덤 픽 : ", choicelist)
+# choicelist = random.choice(list(result_lst))
+# print("랜덤 픽 : ", choicelist)
 print("-" * 80)
