@@ -8,7 +8,6 @@ import folium
 import numpy as np
 import pandas as pd
 import streamlit as st
-from auth import geocodeKey, myKey
 from bs4 import BeautifulSoup
 from folium.plugins import MarkerCluster
 from selenium import webdriver
