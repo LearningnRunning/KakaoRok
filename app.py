@@ -23,29 +23,30 @@ from selenium.webdriver.support.ui import WebDriverWait
 from streamlit_folium import st_folium
 
 st.sidebar.header("맛키맛키 ")
-name = st.sidebar.selectbox("menu", ["Welcome", "kakaoRok", "KakaoCrawler"])
+name = st.sidebar.selectbox("menu", ["kakaoRok"])
 
-if name == "Welcome":
-    st.write("# Hello")
+# if name == "Welcome":
+#     st.write("# Hello")
 
-    st.write("## 실행방법")
-    st.write(" 터미널 창\n streamlit run app.py")
-    st.write("## 환경설정")
-    st.write("폴더 내의 크롬드라이버 버전 맞추기!")
+#     st.write("## 실행방법")
+#     st.write(" 터미널 창\n streamlit run app.py")
+#     st.write("## 환경설정")
+#     st.write("폴더 내의 크롬드라이버 버전 맞추기!")
 
-    st.write("## 사용방법")
-    st.write("### 1. 맛키맛키_ 걍 input 하라는대로!")
-    st.write(
-        '### 2. 크롤러_ 예를 들어 "부산 서면" 이라고 친다면 부산 서면 맛집 450개를 스크래핑하여 matki_DB 데이터에 추가됩니다! '
-    )
+#     st.write("## 사용방법")
+#     st.write("### 1. 맛키맛키_ 걍 input 하라는대로!")
+#     st.write(
+#         '### 2. 크롤러_ 예를 들어 "부산 서면" 이라고 친다면 부산 서면 맛집 450개를 스크래핑하여 matki_DB 데이터에 추가됩니다! '
+#     )
 
-elif name == "kakaoRok":
+if name == "kakaoRok":
     # matki_DB 경로설정
     tmp_df = pd.read_csv("./matki_DB.csv")
     region_lst = list(dict.fromkeys(tmp_df["region"].to_list()))
 
     st.write()
-    st.write("깐깐한 리뷰어들이 극찬한 음식점을 찾아줍니다.")
+    st.write("# 깐깐한 리뷰어들이 극찬한 음식점을 찾아줍니다. ")
+    st.write("## 카테고리를 골라보세요.")
 
     cat = [
         "베이커리,카페",
