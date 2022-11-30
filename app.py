@@ -25,7 +25,6 @@ from streamlit_folium import st_folium
 
 st.sidebar.header("맛키맛키 ")
 name = st.sidebar.selectbox("menu", ["Welcome", "kakaoRok", "KakaoCrawler"])
-n_similar = st.sidebar.slider("Max number of similar entries", 1, 100, value=20, step=1)
 
 if name == "Welcome":
     st.write("# Hello")
