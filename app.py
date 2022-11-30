@@ -109,7 +109,7 @@ if name == "kakaoRok":
                     bad_review = "불호가 너무 많은 식당입니다. 불호 개수 : {}".format(len(row_df))
                     iframe = "{0} <br> {1}".format(result[0], bad_review)
                 else:
-                    iframe = "{0} /<br> 깐깐한 리뷰어 {1}명이 좋아합니다. <br> {2} <br>{3}".format(
+                    iframe = "{0} <br> 깐깐한 리뷰어 {1}명이 좋아합니다. <br> {2} <br>{3}".format(
                         result[0], result[1], likePoint_tmp, detail["cat2"]
                     )
                 popup = folium.Popup(iframe, min_width=200, max_width=500)
