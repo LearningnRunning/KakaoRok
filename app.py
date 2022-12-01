@@ -105,7 +105,7 @@ cat = {
 
 # matki_DB 경로설정
 tmp_df = pd.read_csv("./matki_DB.csv")
-result_df = tmp_df
+
 if name == "Welcome":
     st.write("# Hello, KaKaoRok World")
     st.write("## 0. 서비스 설명")
@@ -165,7 +165,9 @@ elif name == "kakaoRok":
         x, y = geocode(region)
 
         RestaurantType = cat[int(input_cat)]
-
+        result_df = tmp_df[
+            (tmp_df["cat1"] == RestaurantType) & (tmp_df["lon"].notnull())
+        ]
         st.write()
         st.write("# {}(음식점, 깐깐한 리뷰어 수)".format(RestaurantType))
 
@@ -176,10 +178,10 @@ elif name == "kakaoRok":
             try:
                 personalAverageScoreRow = 3.2
                 thisRestaurantScore = 2.0
-                row_df = tmp_df[
-                    (tmp_df["name"] == result[0])
-                    & (tmp_df["rate"] >= personalAverageScoreRow)
-                    & (tmp_df["reviewAt"] <= thisRestaurantScore)
+                row_df = result_df[
+                    (result_df["name"] == result[0])
+                    & (result_df["rate"] >= personalAverageScoreRow)
+                    & (result_df["reviewAt"] <= thisRestaurantScore)
                 ]
 
                 detail = result_df[result_df["name"] == result[0]].iloc[0, :]
