@@ -69,8 +69,9 @@ if name == "kakaoRok":
     tmp_df = pd.read_csv("./matki_DB.csv")
     region_lst = list(dict.fromkeys(tmp_df["region"].to_list()))
 
-    st.write()
     st.write("# 깐깐한 리뷰어들이 극찬한 음식점을 찾아줍니다. ")
+    st.write("※ 서비스 중인 지역 입니다.")
+    st.write(region_lst)
     st.write("## 카테고리를 골라보세요.")
 
     cat = [
@@ -93,7 +94,7 @@ if name == "kakaoRok":
         st.write(i, ": ", v)
 
     input_cat = st.text_input("카테고리를 설정해주세요(번호) : ")
-    region = st.text_input("검색할 지역을 입력해주세요(ex 영등포구)")
+    region = st.text_input("검색할 지역을 입력해주세요(ex 영등포구 or 응암동)")
 
     if bool(input_cat) and bool(region):
         x, y = geocode(region)
