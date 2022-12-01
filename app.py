@@ -32,7 +32,7 @@ def geocode(address):
         "address": address,
         "format": "json",
         "type": "parcel",
-        "key": geocodeKey,
+        "key": st.secrets["geocodeKey"],
     }
     try:
         response = requests.get(apiurl, params=params)
