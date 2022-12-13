@@ -1,23 +1,11 @@
 from collections import Counter
-from time import sleep
 
 import folium
 import pandas as pd
 import requests
 import streamlit as st
-from bs4 import BeautifulSoup
 from folium.plugins import MarkerCluster
-from selenium import webdriver
-from selenium.common.exceptions import (
-    ElementNotInteractableException,
-    NoSuchElementException,
-    StaleElementReferenceException,
-)
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support import expected_conditions as EC
-from selenium.webdriver.support.ui import WebDriverWait
-from streamlit_folium import st_folium
+from streamlit_folium import folium_static, st_folium
 
 st.sidebar.header("맛키맛키 ")
 name = st.sidebar.selectbox("menu", ["Welcome", "kakaoRok"])
@@ -158,8 +146,18 @@ elif name == "kakaoRok":
     for i, v in enumerate(cat):
         st.write(i, ": ", v)
 
-    input_cat = st.text_input("카테고리를 설정해주세요(번호) : ")
-    region = st.text_input("검색할 지역을 입력해주세요(ex 영등포구 or 속초시)")
+    input_cat = st.text_input("카테고리를 설정해주세요(번호) : ", value="11")
+    region = st.text_input("검색할 지역을 입력해주세요(ex 영등포구 or 속초시)", value="영등포구")
+
+    # btn_clicked = st.button("Confirm", key="confirm_btn")
+
+    # if btn_clicked:
+    #     con = st.container()
+    #     con.caption("Result")
+    #     if not str(input_cat):
+    #         con.error("다시 입력해주세요.")
+    #     else:
+    #         con.write(region, input_cat)
 
     if bool(input_cat) and bool(region):
         x, y = geocode(region)
@@ -172,7 +170,7 @@ elif name == "kakaoRok":
         st.write("# {}(음식점, 깐깐한 리뷰어 수)".format(RestaurantType))
 
         result_lst = Counter(result_df["name"].to_list()).most_common()
-        m = folium.Map(location=[y, x], zoom_start=14)
+        m = folium.Map(location=[y, x], zoom_start=15)
         marker_cluster = MarkerCluster().add_to(m)
         for result in result_lst:
             try:
@@ -218,4 +216,4 @@ elif name == "kakaoRok":
             except Exception as err:
                 st.write(err)
                 continue
-        st_data = st_folium(m, width=1080)
+        st_data = folium_static(m, width=700)
