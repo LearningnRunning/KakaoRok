@@ -97,8 +97,8 @@ tmp_df = pd.read_csv("./matki_DB.csv")
 if name == "Welcome":
     st.write("# Hello, KaKaoRok World")
     st.write(
-        "보유 음식점 수: {}개/ 깐깐한 평가 수: {}개".format(
-            len(set(tmp_df["name"].to_list()), len(tmp_df["name"].to_list()))
+        "보유 음식점 수: {0}개 깐깐한 평가 수: {1}개".format(
+            len(set(tmp_df["name"].to_list())), len(tmp_df["name"].to_list()))
         )
     )
     st.write("## 0. 서비스 설명")
