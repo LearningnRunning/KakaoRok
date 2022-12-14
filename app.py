@@ -98,9 +98,10 @@ if name == "Welcome":
     st.write("# Hello, KaKaoRok World")
     st.write(
         "보유 음식점 수: {0}개 깐깐한 평가 수: {1}개".format(
-            len(set(tmp_df["name"].to_list())), len(tmp_df["name"].to_list()))
+            len(set(tmp_df["name"].to_list())), len(tmp_df["name"].to_list())
         )
     )
+
     st.write("## 0. 서비스 설명")
     st.write(
         "1. 음식점 평균 평점이 3.0 이상\n2. 리뷰어 개인 평균 평점이 3.8 이하지만 해당 음식점에는 4.0 이상으로 평가한 리뷰어\n"
