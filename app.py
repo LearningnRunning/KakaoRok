@@ -216,4 +216,4 @@ elif name == "kakaoRok":
             except Exception as err:
                 st.write(err)
                 continue
-        st_data = folium_static(m, width=700)
+        st_data = folium_static(m, width=700, height=1080)
