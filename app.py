@@ -154,7 +154,18 @@ elif name == "kakaoRok":
 
     input_cat = st.text_input("카테고리를 설정해주세요(번호) : ", value="11")
     region = st.text_input("검색할 지역을 입력해주세요(ex 영등포구 or 속초시)", value="영등포구")
+    size = st.radio(
+    "사이즈를 위해 사용 중인 디바이스 선택",
+    ('Phone', 'Web'))
 
+    if size == "Phone":
+        wdt,hght = 640,1136
+
+    elif size == "Web":
+        wdt,hght = 1536,2048
+
+    
+        
     # btn_clicked = st.button("Confirm", key="confirm_btn")
 
     # if btn_clicked:
@@ -170,12 +181,14 @@ elif name == "kakaoRok":
 
         RestaurantType = cat[int(input_cat)]
         result_df = tmp_df[
-            (tmp_df["cat1"] == RestaurantType) & (tmp_df["lon"].notnull())
+            (tmp_df["cat1"] == RestaurantType) & (tmp_df["lon"].notnull()) & (tmp_df["lat"].notnull())
         ]
         st.write()
         st.write("# {}(음식점, 깐깐한 리뷰어 수)".format(RestaurantType))
 
-        result_lst = Counter(result_df["name"].to_list()).most_common()
+        result_tmp = Counter(result_df["name"].to_list())
+
+        result_lst = {k: v for k, v in result_tmp.items() if v > 3}
         m = folium.Map(location=[y, x], zoom_start=15)
         marker_cluster = MarkerCluster().add_to(m)
         for result in result_lst:
@@ -211,6 +224,7 @@ elif name == "kakaoRok":
                         likePoint_tmp,
                         menu,
                     )
+                
                 popup = folium.Popup(iframe, min_width=200, max_width=500)
 
                 folium.Marker(
@@ -222,4 +236,5 @@ elif name == "kakaoRok":
             except Exception as err:
                 st.write(err)
                 continue
-        st_data = folium_static(m, width=500, height=700)
+            
+        st_data = folium_static(m, width=wdt, height=hght)
