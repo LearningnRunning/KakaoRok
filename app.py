@@ -156,17 +156,14 @@ elif name == "kakaoRok":
 
     input_cat = st.text_input("카테고리를 설정해주세요(번호) : ", value="11")
     region = st.text_input("검색할 지역을 입력해주세요(ex 영등포구 or 속초시)", value="영등포구")
-    size = st.radio(
-    "사이즈를 위해 사용 중인 디바이스 선택",
-    ('Phone', 'Web'))
+    # size = st.radio(
+    # "사이즈를 위해 사용 중인 디바이스 선택",
+    # ('Phone', 'Web'))
     people_counts = st.slider('깐깐한 리뷰어 몇 명이상의 식당만 표시할까요?', 1, 50, 4)
     # hate_counts = st.slider('불호 리뷰어 해당 명이상의 식당은 별도 표기합니다', 1, 20, 3)
+    wdt = st.slider('불호 리뷰어 해당 명이상의 식당은 별도 표기합니다', 320, 1536, 400)
+    hght = st.slider('불호 리뷰어 해당 명이상의 식당은 별도 표기합니다', 1000, 2048, 1000)
 
-    if size == "Phone":
-        wdt,hght = 640,1136
-
-    elif size == "Web":
-        wdt,hght = 1536,2048
 
     
         
