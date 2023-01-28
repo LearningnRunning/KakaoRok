@@ -6,6 +6,7 @@ import requests
 import streamlit as st
 from folium.plugins import MarkerCluster
 from streamlit_folium import folium_static, st_folium
+# from auth import *
 
 st.sidebar.header("맛키맛키 ")
 name = st.sidebar.selectbox("menu", ["Welcome", "kakaoRok"])
@@ -20,8 +21,9 @@ def geocode(address):
         "address": address,
         "format": "json",
         "type": "parcel",
-        "key": st.secrets["geocodeKey"],
+        "key": st.secrets["geocodeKey"],# geocodeKey,#
     }
+    
     try:
         response = requests.get(apiurl, params=params)
 
@@ -157,6 +159,8 @@ elif name == "kakaoRok":
     size = st.radio(
     "사이즈를 위해 사용 중인 디바이스 선택",
     ('Phone', 'Web'))
+    people_counts = st.slider('깐깐한 리뷰어 몇 명이상의 식당만 표시할까요?', 1, 50, 4)
+    # hate_counts = st.slider('불호 리뷰어 해당 명이상의 식당은 별도 표기합니다', 1, 20, 3)
 
     if size == "Phone":
         wdt,hght = 640,1136
@@ -186,15 +190,15 @@ elif name == "kakaoRok":
         st.write()
         st.write("# {}(음식점, 깐깐한 리뷰어 수)".format(RestaurantType))
 
-        result_tmp = Counter(result_df["name"].to_list())
+        result_lst = Counter(result_df["name"].to_list()).most_common()
 
-        result_lst = {k: v for k, v in result_tmp.items() if v > 3}
         m = folium.Map(location=[y, x], zoom_start=15)
         marker_cluster = MarkerCluster().add_to(m)
         for result in result_lst:
             try:
                 personalAverageScoreRow = 3.2
                 thisRestaurantScore = 2.0
+                # print(result)
                 row_df = result_df[
                     (result_df["name"] == result[0])
                     & (result_df["rate"] >= personalAverageScoreRow)
@@ -202,6 +206,7 @@ elif name == "kakaoRok":
                 ]
 
                 detail = result_df[result_df["name"] == result[0]].iloc[0, :]
+                # print(detail)
                 if type(detail["likePoint"]) != float:
                     likePoint = detail["likePoint"].split("@")
                     likePointCnt = detail["likePointCnt"].split("@")
@@ -213,7 +218,9 @@ elif name == "kakaoRok":
                 if len(row_df) >= 3:
                     bad_review = "불호가 너무 많은 식당입니다. 불호 개수 : {}".format(len(row_df))
                     iframe = "{0} <br> {1}".format(result[0], bad_review)
-                else:
+                    popup = folium.Popup(iframe, min_width=200, max_width=500)
+
+                elif result[1] >= people_counts:
                     if type(detail["cat2"]) != float:
                         menu = detail["cat2"].replace(" ", "<br>")
                     else:
@@ -225,7 +232,7 @@ elif name == "kakaoRok":
                         menu,
                     )
                 
-                popup = folium.Popup(iframe, min_width=200, max_width=500)
+                    popup = folium.Popup(iframe, min_width=200, max_width=500)
 
                 folium.Marker(
                     [detail["lat"], detail["lon"]],
@@ -236,5 +243,5 @@ elif name == "kakaoRok":
             except Exception as err:
                 st.write(err)
                 continue
-            
+
         st_data = folium_static(m, width=wdt, height=hght)
