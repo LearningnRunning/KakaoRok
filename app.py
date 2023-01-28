@@ -161,8 +161,8 @@ elif name == "kakaoRok":
     # ('Phone', 'Web'))
     people_counts = st.slider('깐깐한 리뷰어 몇 명이상의 식당만 표시할까요?', 1, 50, 4)
     # hate_counts = st.slider('불호 리뷰어 해당 명이상의 식당은 별도 표기합니다', 1, 20, 3)
-    wdt = st.slider('불호 리뷰어 해당 명이상의 식당은 별도 표기합니다', 320, 1536, 400)
-    hght = st.slider('불호 리뷰어 해당 명이상의 식당은 별도 표기합니다', 1000, 2048, 1000)
+    wdt = st.slider('화면 가로 크기', 320, 1536, 400)
+    hght = st.slider('화면 세로 크기', 1000, 2048, 1000)
 
 
     
