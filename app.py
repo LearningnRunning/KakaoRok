@@ -24,18 +24,18 @@ def geocode(address):
         "key": st.secrets["geocodeKey"],
     }
 
-from auth import *
-def geocode(address):
-    apiurl = "http://api.vworld.kr/req/address?"
-    params = {
-        "service": "address",
-        "request": "getcoord",
-        "crs": "epsg:4326",
-        "address": address,
-        "format": "json",
-        "type": "parcel",
-        "key": geocodeKey
-    }
+# from auth import *
+# def geocode(address):
+#     apiurl = "http://api.vworld.kr/req/address?"
+#     params = {
+#         "service": "address",
+#         "request": "getcoord",
+#         "crs": "epsg:4326",
+#         "address": address,
+#         "format": "json",
+#         "type": "parcel",
+#         "key": geocodeKey
+#     }
     
     try:
         response = requests.get(apiurl, params=params)
