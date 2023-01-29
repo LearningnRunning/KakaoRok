@@ -6,7 +6,7 @@ import requests
 import streamlit as st
 from folium.plugins import MarkerCluster
 from streamlit_folium import folium_static, st_folium
-# from auth import *
+
 
 st.sidebar.header("맛키맛키 ")
 name = st.sidebar.selectbox("menu", ["Welcome", "kakaoRok"])
@@ -21,7 +21,20 @@ def geocode(address):
         "address": address,
         "format": "json",
         "type": "parcel",
-        "key": st.secrets["geocodeKey"],# geocodeKey,#
+        "key": st.secrets["geocodeKey"],
+    }
+
+from auth import *
+def geocode(address):
+    apiurl = "http://api.vworld.kr/req/address?"
+    params = {
+        "service": "address",
+        "request": "getcoord",
+        "crs": "epsg:4326",
+        "address": address,
+        "format": "json",
+        "type": "parcel",
+        "key": geocodeKey
     }
     
     try:
@@ -135,27 +148,26 @@ elif name == "kakaoRok":
 
     st.write("## 카테고리를 골라보세요.")
 
-    cat = [
-        "베이커리,카페",
-        "패스트푸드",
-        "샌드위치,샐러드",
-        "육류",
-        "해산물",
-        "한식",
-        "일식",
-        "양식",
-        "중식",
-        "기타",
-        "면류",
-        "술집",
-        "찌개,국밥",
-    ]
+    cat = st.radio(
+    "",
+    (
+    "베이커리,카페",
+    "패스트푸드",
+    "샌드위치,샐러드",
+    "육류",
+    "해산물",
+    "한식",
+    "일식",
+    "양식",
+    "중식",
+    "기타",
+    "면류",
+    "술집",
+    "찌개,국밥"
+    ))
 
-    for i, v in enumerate(cat):
-        st.write(i, ": ", v)
-
-    input_cat = st.text_input("카테고리를 설정해주세요(번호) : ", value="11")
-    region = st.text_input("검색할 지역을 입력해주세요(ex 영등포구 or 속초시)", value="영등포구")
+    # input_cat = st.text_input("카테고리를 설정해주세요(번호) : ", value="11")
+    region = st.text_input("검색할 지역을 입력해주세요(ex 영등포구 or 속초시)", value="서울특별시 중구")
     # size = st.radio(
     # "사이즈를 위해 사용 중인 디바이스 선택",
     # ('Phone', 'Web'))
@@ -177,10 +189,10 @@ elif name == "kakaoRok":
     #     else:
     #         con.write(region, input_cat)
 
-    if bool(input_cat) and bool(region):
+    if bool(cat) and bool(region):
         x, y = geocode(region)
 
-        RestaurantType = cat[int(input_cat)]
+        RestaurantType = cat
         result_df = tmp_df[
             (tmp_df["cat1"] == RestaurantType) & (tmp_df["lon"].notnull()) & (tmp_df["lat"].notnull())
         ]
