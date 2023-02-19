@@ -231,7 +231,7 @@ elif name == "kakaoRok":
 
                 elif result[1] >= people_counts:
                     if type(detail["cat2"]) != float:
-                        menu = detail["cat2"].replace(" ", "<br>")
+                        menu = detail["cat2"].replace(" ", ", ")
                     else:
                         menu = "메뉴정보가 없는 음식점입니다."
                     iframe = "{0} <br> 깐깐한 리뷰어 {1}명이 좋아합니다. <br> {2} <br>{3}".format(
