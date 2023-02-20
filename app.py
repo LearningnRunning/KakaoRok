@@ -6,7 +6,7 @@ import requests
 import streamlit as st
 from folium.plugins import MarkerCluster
 from streamlit_folium import folium_static, st_folium
-
+import branca
 
 st.sidebar.header("맛키맛키 ")
 name = st.sidebar.selectbox("menu", ["Welcome", "kakaoRok"])
@@ -52,6 +52,63 @@ def geocode(address):
         print(e)
         pass
 
+def popup_html(df):
+    name=df['name']
+    category1=df['cat1']
+    address = df['addresse'] 
+    review_num=df['review_num']
+    # city_state = df['CITY'].iloc[i] +", "+ df['STABBR'].iloc[i]                     
+    blog_review_num = df['blog_review_num']
+    score_min = df['score_min']
+    menu = df['cat2']
+    likepoint = df['likePoint'] + df['likePointCnt']
+
+    left_col_color = "#19a7bd"
+    right_col_color = "#f2f0d3"
+    
+    html = """<!DOCTYPE html>
+<html>
+<head>
+<h4 style="margin-bottom:10"; width="200px">{}</h4>""".format(name) + """
+</head>
+    <table style="height: 126px; width: 350px;">
+<tbody>
+<tr>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Institution Type</span></td>
+<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(address) + """
+</tr>
+
+<tr>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Institution URL</span></td>
+<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(category1) + """
+</tr>
+<tr>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Highest Degree Awarded</span></td>
+<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(review_num) + """
+</tr>
+<tr>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Admission Rate</span></td>
+<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(blog_review_num) + """
+</tr>
+<tr>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Annual score_min of Attendance $</span></td>
+<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(score_min) + """
+</tr>
+
+<tr>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">In-state Tuition $</span></td>
+<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(str(menu)) + """
+</tr>
+<tr>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Out-of-state Tuition $</span></td>
+<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(likepoint) + """
+</tr>
+
+</tbody>
+</table>
+</html>
+"""
+    return html
 
 cat = {
     "베이커리,카페": [
@@ -215,6 +272,7 @@ elif name == "kakaoRok":
                 ]
 
                 detail = result_df[result_df["name"] == result[0]].iloc[0, :]
+
                 # print(detail)
                 if type(detail["likePoint"]) != float:
                     likePoint = detail["likePoint"].split("@")
@@ -229,26 +287,48 @@ elif name == "kakaoRok":
                     iframe = "{0} <br> {1}".format(result[0], bad_review)
                     popup = folium.Popup(iframe, min_width=200, max_width=500)
 
-                elif result[1] >= people_counts:
-                    if type(detail["cat2"]) != float:
-                        menu = detail["cat2"].replace(" ", ", ")
-                    else:
-                        menu = "메뉴정보가 없는 음식점입니다."
-                    iframe = "{0} <br> 깐깐한 리뷰어 {1}명이 좋아합니다. <br> {2} <br>{3}".format(
-                        result[0],
-                        result[1],
-                        likePoint_tmp,
-                        menu,
-                    )
+                # elif result[1] >= people_counts:
+                #     if type(detail["cat2"]) != float:
+                #         menu = detail["cat2"].replace(" ", ", ")
+                #     else:
+                #         menu = "메뉴정보가 없는 음식점입니다."
+                #     iframe = "{0} <br> 깐깐한 리뷰어 {1}명이 좋아합니다. <br> {2} <br>{3}".format(
+                #         result[0],
+                #         result[1],
+                #         likePoint_tmp,
+                #         menu,
+                #     )
                 
-                    popup = folium.Popup(iframe, min_width=200, max_width=500)
+                #     popup = folium.Popup(iframe, min_width=200, max_width=500)
 
+                # folium.Marker(
+                #     [detail["lat"], detail["lon"]],
+                #     icon=folium.Icon(color="green"),
+                #     popup=popup,
+                #     tooltip=name,
+                # ).add_to(marker_cluster)
+
+                # 편집중 
+                elif result[1] >= people_counts:
+                    institution_type = result_df[result_df["name"] == result[0]].iloc[0, :]
+                    # if institution_type == 'Public':
+                    #     color = 'darkblue'
+                    # elif institution_type == 'Private for-profit' or institution_type == 'Private nonprofit':
+                    #     color = 'lightbrown'
+                    # else:
+                    #     color = 'gray'
+                        
+                    html = popup_html(detail)
+                    iframe = branca.element.IFrame(html=html,width=510,height=280)
+                    popup = folium.Popup(folium.Html(html, script=True), max_width=500)
                 folium.Marker(
                     [detail["lat"], detail["lon"]],
-                    icon=folium.Icon(color="green"),
                     popup=popup,
                     tooltip=name,
-                ).add_to(marker_cluster)
+                    icon=folium.Icon(color='lightbrown', icon='university', prefix='fa')
+                    ).add_to(marker_cluster)
+
+
             except Exception as err:
                 st.write(err)
                 continue
