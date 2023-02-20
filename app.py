@@ -7,8 +7,11 @@ import streamlit as st
 from folium.plugins import MarkerCluster
 from streamlit_folium import folium_static, st_folium
 import branca
+from PIL import Image
 
-st.sidebar.header("맛키맛키 ")
+BannerImage = Image.open('KakaoRok.png')
+
+st.sidebar.header("KakaoRok")
 name = st.sidebar.selectbox("menu", ["Welcome", "kakaoRok"])
 
 
@@ -52,12 +55,12 @@ def geocode(address):
         print(e)
         pass
 
-def popup_html(df):
+def popup_html(df,count):
     name=df['name']
     category1=df['cat1']
     address = df['addresse'] 
     review_num=df['review_num']
-    # city_state = df['CITY'].iloc[i] +", "+ df['STABBR'].iloc[i]                     
+                    
     blog_review_num = df['blog_review_num']
     score_min = df['score_min']
     menu = df['cat2']
@@ -69,39 +72,42 @@ def popup_html(df):
     html = """<!DOCTYPE html>
 <html>
 <head>
-<h4 style="margin-bottom:10"; width="200px">{}</h4>""".format(name) + """
+<h4 width="200px">{0}</h4>""".format(name) + """
+<h5 style="margin-bottom:10"; width="200px">{0}명의 리뷰어가 4점 이상으로 평가하였습니다.</h4>""".format(count) + """
+
 </head>
     <table style="height: 126px; width: 350px;">
 <tbody>
-<tr>
-<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Institution Type</span></td>
-<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(address) + """
-</tr>
+
 
 <tr>
-<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Institution URL</span></td>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">업종</span></td>
 <td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(category1) + """
 </tr>
 <tr>
-<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Highest Degree Awarded</span></td>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">평점수</span></td>
 <td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(review_num) + """
 </tr>
 <tr>
-<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Admission Rate</span></td>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">블로그 리뷰수</span></td>
 <td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(blog_review_num) + """
 </tr>
 <tr>
-<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Annual score_min of Attendance $</span></td>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">평균 평점</span></td>
 <td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(score_min) + """
 </tr>
 
 <tr>
-<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">In-state Tuition $</span></td>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">메뉴</span></td>
 <td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(str(menu)) + """
 </tr>
 <tr>
-<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">Out-of-state Tuition $</span></td>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">요약</span></td>
 <td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(likepoint) + """
+</tr>
+<tr>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">주소</span></td>
+<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(address) + """
 </tr>
 
 </tbody>
@@ -167,12 +173,12 @@ cat = {
 tmp_df = pd.read_csv("./matki_DB.csv")
 
 if name == "Welcome":
-    st.write("# Hello, KaKaoRok World")
-    st.write(
-        "보유 음식점 수: {0}개 깐깐한 평가 수: {1}개".format(
+    st.image(BannerImage)
+    st.write("# Hello, KakaoRok World")
+    st.write("보유 음식점 수: {0}개 깐깐한 평가 수: {1}개".format(
             len(set(tmp_df["name"].to_list())), len(tmp_df["name"].to_list())
-        )
-    )
+        ))
+    
 
     st.write("## 0. 서비스 설명")
     st.write(
@@ -318,7 +324,7 @@ elif name == "kakaoRok":
                     # else:
                     #     color = 'gray'
                         
-                    html = popup_html(detail)
+                    html = popup_html(detail,result[1])
                     iframe = branca.element.IFrame(html=html,width=510,height=280)
                     popup = folium.Popup(folium.Html(html, script=True), max_width=500)
                 folium.Marker(
