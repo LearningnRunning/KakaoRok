@@ -55,17 +55,26 @@ def geocode(address):
         print(e)
         pass
 
-def popup_html(df,count):
+def popup_html(df,count, likepoint):
     name=df['name']
     category1=df['cat1']
     address = df['addresse'] 
     review_num=df['review_num']
+    if isinstance(review_num, (int,str)):
+        review_num = int(review_num)
                     
     blog_review_num = df['blog_review_num']
     score_min = df['score_min']
-    menu = df['cat2']
-    likepoint = df['likePoint'] + df['likePointCnt']
 
+
+    if type(df["cat2"]) != float:
+        menu = df["cat2"].replace("]", "").replace('[','').split(', ')
+        if len(menu) >= 10:
+            menu = '</br>'.join(menu[:10])
+        else:
+            menu = '</br>'.join(menu)
+    else:
+        menu = "메뉴정보가 없는 음식점입니다."
     left_col_color = "#19a7bd"
     right_col_color = "#f2f0d3"
     
@@ -85,16 +94,12 @@ def popup_html(df,count):
 <td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(category1) + """
 </tr>
 <tr>
-<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">평점수</span></td>
-<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(review_num) + """
-</tr>
-<tr>
-<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">블로그 리뷰수</span></td>
-<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(blog_review_num) + """
-</tr>
-<tr>
 <td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">평균 평점</span></td>
 <td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(score_min) + """
+</tr>
+<tr>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">평점수/ 블로그 리뷰수</span></td>
+<td style="width: 150px;background-color: """+ right_col_color +""";">{0} 개/ {1}개</td>""".format(review_num, blog_review_num) + """
 </tr>
 
 <tr>
@@ -287,17 +292,16 @@ elif name == "kakaoRok":
                     for l, c in zip(likePoint, likePointCnt):
                         tmp = l + ": " + c
                         likePointList.append(tmp)
-                        likePoint_tmp = "/ ".join(likePointList)
+                        likePoint_tmp = " ".join(likePointList)
+                    
                 if len(row_df) >= 3:
                     bad_review = "불호가 너무 많은 식당입니다. 불호 개수 : {}".format(len(row_df))
                     iframe = "{0} <br> {1}".format(result[0], bad_review)
                     popup = folium.Popup(iframe, min_width=200, max_width=500)
+                    color = 'gray'
 
                 # elif result[1] >= people_counts:
-                #     if type(detail["cat2"]) != float:
-                #         menu = detail["cat2"].replace(" ", ", ")
-                #     else:
-                #         menu = "메뉴정보가 없는 음식점입니다."
+                #     
                 #     iframe = "{0} <br> 깐깐한 리뷰어 {1}명이 좋아합니다. <br> {2} <br>{3}".format(
                 #         result[0],
                 #         result[1],
@@ -317,21 +321,18 @@ elif name == "kakaoRok":
                 # 편집중 
                 elif result[1] >= people_counts:
                     institution_type = result_df[result_df["name"] == result[0]].iloc[0, :]
-                    # if institution_type == 'Public':
-                    #     color = 'darkblue'
-                    # elif institution_type == 'Private for-profit' or institution_type == 'Private nonprofit':
-                    #     color = 'lightbrown'
-                    # else:
-                    #     color = 'gray'
+                    
                         
-                    html = popup_html(detail,result[1])
+                    html = popup_html(detail,result[1],likePoint_tmp)
                     iframe = branca.element.IFrame(html=html,width=510,height=280)
                     popup = folium.Popup(folium.Html(html, script=True), max_width=500)
+                    color = 'darkblue'
+
                 folium.Marker(
                     [detail["lat"], detail["lon"]],
                     popup=popup,
                     tooltip=name,
-                    icon=folium.Icon(color='lightbrown', icon='university', prefix='fa')
+                    icon=folium.Icon(color=color, icon="cloud", prefix='fa')
                     ).add_to(marker_cluster)
 
 
