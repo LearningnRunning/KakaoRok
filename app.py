@@ -55,7 +55,7 @@ def geocode(address):
         print(e)
         pass
 
-def popup_html(df,count, likepoint):
+def popup_html(df,count, likepoint,menu, unlike):
     name=df['name']
     category1=df['cat1']
     address = df['addresse'] 
@@ -66,18 +66,17 @@ def popup_html(df,count, likepoint):
     blog_review_num = df['blog_review_num']
     score_min = df['score_min']
 
-
-    if type(df["cat2"]) != float:
-        print(df["cat2"])
-        menu = df["cat2"].replace("]", "").replace('[','').split(', ')
-        if len(menu) >= 10:
-            menu = '</br>'.join(menu)[:50]
-      
-        else:
-            menu = '</br>'.join(menu)[:50]
-
+    
+    if type(df["url"]) == float:
+        link = 'https://map.kakao.com/'
     else:
-        menu = "메뉴정보가 없는 음식점입니다."
+        link = df['url']
+
+    if type(df["open_time"]) == float:
+        open_time = '준비중'
+    else:
+        open_time = df["open_time"]        
+        
     left_col_color = "#19a7bd"
     right_col_color = "#f2f0d3"
     
@@ -85,7 +84,10 @@ def popup_html(df,count, likepoint):
 <html>
 <head>
 <h4 width="200px">{0}</h4>""".format(name) + """
-<h5 style="margin-bottom:10"; width="200px">{0}명의 리뷰어가 4점 이상으로 평가하였습니다.</h4>""".format(count) + """
+<a href="{0}" target="_blank">""".format(link) + """
+  <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/KakaoMap_logo.png" alt="Clickable image" width='20'>
+</a>
+<h5 style="margin-bottom:10"; width="200px">{0}명의 리뷰어가 4점 이상으로 평가하였습니다.{1}</h4>""".format(count, unlike) + """
 
 </head>
     <table style="height: 126px; width: 350px;">
@@ -107,11 +109,15 @@ def popup_html(df,count, likepoint):
 
 <tr>
 <td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">메뉴</span></td>
-<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(str(menu)) + """
+<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(menu) + """
 </tr>
 <tr>
 <td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">요약</span></td>
 <td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(likepoint) + """
+</tr>
+<tr>
+<td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">영업시간</span></td>
+<td style="width: 150px;background-color: """+ right_col_color +""";">{}</td>""".format(open_time) + """
 </tr>
 <tr>
 <td style="background-color: """+ left_col_color +""";"><span style="color: #ffffff;">주소</span></td>
@@ -245,7 +251,7 @@ elif name == "kakaoRok":
     people_counts = st.slider('깐깐한 리뷰어 몇 명이상의 식당만 표시할까요?', 1, 50, 4)
     # hate_counts = st.slider('불호 리뷰어 해당 명이상의 식당은 별도 표기합니다', 1, 20, 3)
     wdt = st.slider('화면 가로 크기', 320, 1536, 400)
-    hght = st.slider('화면 세로 크기', 500, 2048, 1000)
+    hght = st.slider('화면 세로 크기', 500, 2048, 700)
 
 
     
@@ -297,39 +303,31 @@ elif name == "kakaoRok":
                         likePointList.append(tmp)
                         likePoint_tmp = " ".join(likePointList)
                     
-                if len(row_df) >= 3:
-                    bad_review = "불호가 너무 많은 식당입니다. 불호 개수 : {}".format(len(row_df))
-                    iframe = "{0} <br> {1}".format(result[0], bad_review)
-                    popup = folium.Popup(iframe, min_width=200, max_width=500)
+                if len(row_df) >= 5:
                     color = 'gray'
+                    unlike = "</br> 다만, 불호가 너무 많은 식당입니다. 불호 개수 : {}".format(len(row_df))
 
-                # elif result[1] >= people_counts:
-                #     
-                #     iframe = "{0} <br> 깐깐한 리뷰어 {1}명이 좋아합니다. <br> {2} <br>{3}".format(
-                #         result[0],
-                #         result[1],
-                #         likePoint_tmp,
-                #         menu,
-                #     )
-                
-                #     popup = folium.Popup(iframe, min_width=200, max_width=500)
-
-                # folium.Marker(
-                #     [detail["lat"], detail["lon"]],
-                #     icon=folium.Icon(color="green"),
-                #     popup=popup,
-                #     tooltip=name,
-                # ).add_to(marker_cluster)
-
-                # 편집중 
                 elif result[1] >= people_counts:
-                    institution_type = result_df[result_df["name"] == result[0]].iloc[0, :]
-                    
-                        
-                    html = popup_html(detail,result[1],likePoint_tmp)
-                    iframe = branca.element.IFrame(html=html,width=510,height=280)
-                    popup = folium.Popup(folium.Html(html, script=True), max_width=500)
                     color = 'darkblue'
+                    unlike = ''
+                if type(detail["cat2"]) != float:
+                    menu_tmp = detail["cat2"]
+                    if menu_tmp.find('['):
+                        menu_list = [" ".join(i.split("\n")[:2]) for i in menu_tmp.replace('[','').replace('[','').split(', ') if len(i)]
+                        menu = "\n".join(menu_list)
+                    elif menu_tmp.find('->'):
+                        menu_list =[" ".join(i.split("\n")[:2]) for i in menu_tmp.replace('가격:', '').split('->')]
+                        menu = "\n".join(menu_list)
+                    elif len(menu_tmp):
+                        menu = "".join(menu_tmp.replace('[','').replace('[','').split(', '))
+                    else:
+                        menu = "메뉴정보가 없는 음식점입니다." 
+                if len(menu) >= 120:
+                    menu = menu[:120] 
+                html = popup_html(detail,result[1], likePoint_tmp, menu, unlike)
+                iframe = branca.element.IFrame(html=html,width=510,height=280)
+                popup = folium.Popup(folium.Html(html, script=True), max_width=500)
+                    
 
                 folium.Marker(
                     [detail["lat"], detail["lon"]],
