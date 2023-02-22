@@ -71,11 +71,11 @@ def popup_html(df,count, likepoint):
         print(df["cat2"])
         menu = df["cat2"].replace("]", "").replace('[','').split(', ')
         if len(menu) >= 10:
-            menu = '</br>'.join(menu[:10])
-            # print(menu)
+            menu = '</br>'.join(menu)[:50]
+      
         else:
-            menu = '</br>'.join(menu)
-            # print(menu)
+            menu = '</br>'.join(menu)[:50]
+
     else:
         menu = "메뉴정보가 없는 음식점입니다."
     left_col_color = "#19a7bd"
