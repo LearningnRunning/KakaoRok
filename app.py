@@ -83,10 +83,16 @@ def popup_html(df,count, likepoint,menu, unlike):
     html = """<!DOCTYPE html>
 <html>
 <head>
-<h4 width="200px">{0}</h4>""".format(name) + """
-<a href="{0}" target="_blank">""".format(link) + """
-  <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/KakaoMap_logo.png" alt="Clickable image" width='20'>
-</a>
+<div>
+    <a href="{0}" target="_blank" >""".format(link) + """
+        <img src="https://upload.wikimedia.org/wikipedia/commons/0/08/KakaoMap_logo.png" alt="Clickable image" width="20" style="float: left; margin-right: 10px;">
+    </a>
+    <p>
+        <h4 width="200px" >{0}</h4>""".format(name) + """
+    </p>
+</div>
+
+
 <h5 style="margin-bottom:10"; width="200px">{0}명의 리뷰어가 4점 이상으로 평가하였습니다.{1}</h4>""".format(count, unlike) + """
 
 </head>
@@ -302,31 +308,31 @@ elif name == "kakaoRok":
                         tmp = l + ": " + c
                         likePointList.append(tmp)
                         likePoint_tmp = " ".join(likePointList)
-                    
+                color = 'darkblue'
+                unlike = ''
                 if len(row_df) >= 5:
                     color = 'gray'
                     unlike = "</br> 다만, 불호가 너무 많은 식당입니다. 불호 개수 : {}".format(len(row_df))
 
                 elif result[1] >= people_counts:
-                    color = 'darkblue'
-                    unlike = ''
-                if type(detail["cat2"]) != float:
-                    menu_tmp = detail["cat2"]
-                    if menu_tmp.find('['):
-                        menu_list = [" ".join(i.split("\n")[:2]) for i in menu_tmp.replace('[','').replace('[','').split(', ') if len(i)]
-                        menu = "\n".join(menu_list)
-                    elif menu_tmp.find('->'):
-                        menu_list =[" ".join(i.split("\n")[:2]) for i in menu_tmp.replace('가격:', '').split('->')]
-                        menu = "\n".join(menu_list)
-                    elif len(menu_tmp):
-                        menu = "".join(menu_tmp.replace('[','').replace('[','').split(', '))
-                    else:
-                        menu = "메뉴정보가 없는 음식점입니다." 
-                if len(menu) >= 120:
-                    menu = menu[:120] 
-                html = popup_html(detail,result[1], likePoint_tmp, menu, unlike)
-                iframe = branca.element.IFrame(html=html,width=510,height=280)
-                popup = folium.Popup(folium.Html(html, script=True), max_width=500)
+    
+                    if type(detail["cat2"]) != float:
+                        menu_tmp = detail["cat2"]
+                        if menu_tmp.find('['):
+                            menu_list = [" ".join(i.split("\n")[:2]) for i in menu_tmp.replace('[','').replace('[','').split(', ') if len(i)]
+                            menu = "\n".join(menu_list)
+                        elif menu_tmp.find('->'):
+                            menu_list =[" ".join(i.split("\n")[:2]) for i in menu_tmp.replace('가격:', '').split('->')]
+                            menu = "\n".join(menu_list)
+                        elif len(menu_tmp):
+                            menu = "".join(menu_tmp.replace('[','').replace('[','').split(', '))
+                        else:
+                            menu = "메뉴정보가 없는 음식점입니다." 
+                    if len(menu) >= 120:
+                        menu = menu[:120] 
+                    html = popup_html(detail,result[1], likePoint_tmp, menu, unlike)
+                    iframe = branca.element.IFrame(html=html,width=510,height=280)
+                    popup = folium.Popup(folium.Html(html, script=True), max_width=500)
                     
 
                 folium.Marker(
