@@ -37,7 +37,7 @@ def geocode(address):
 #         "address": address,
 #         "format": "json",
 #         "type": "parcel",
-#         "key": geocodeKey
+#         "key": geocodeKey_1
 #     }
     
     try:
@@ -335,12 +335,12 @@ elif name == "kakaoRok":
                     popup = folium.Popup(folium.Html(html, script=True), max_width=500)
                     
 
-                folium.Marker(
-                    [detail["lat"], detail["lon"]],
-                    popup=popup,
-                    tooltip=name,
-                    icon=folium.Icon(color=color, icon="cloud", prefix='fa')
-                    ).add_to(marker_cluster)
+                    folium.Marker(
+                        [detail["lat"], detail["lon"]],
+                        popup=popup,
+                        tooltip=name,
+                        icon=folium.Icon(color=color, icon="cloud", prefix='fa')
+                        ).add_to(marker_cluster)
 
 
             except Exception as err:
