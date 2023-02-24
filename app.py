@@ -314,7 +314,7 @@ elif name == "kakaoRok":
                     color = 'gray'
                     unlike = "</br> 다만, 불호가 너무 많은 식당입니다. 불호 개수 : {}".format(len(row_df))
 
-                elif result[1] >= people_counts:
+                if result[1] >= people_counts:
     
                     if type(detail["cat2"]) != float:
                         menu_tmp = detail["cat2"]
