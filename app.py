@@ -297,7 +297,7 @@ elif name == "kakaoRok":
                     & (result_df["reviewAt"] <= thisRestaurantScore)
                 ]
 
-                detail = result_df[result_df["name"] == result[0]].iloc[0, :]
+                detail = result_df[result_df["name"] == result[0]].iloc[-1, :]
 
                 # print(detail)
                 if type(detail["likePoint"]) != float:
